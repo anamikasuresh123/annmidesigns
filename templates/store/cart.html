@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Cart – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .cart-wrapper{max-width:900px;margin:0 auto;padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:2rem;}
+  .cart-item{display:flex;align-items:center;gap:1.5rem;background:rgba(24,4,13,0.75);border:1px solid var(--frame);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+  .cart-item img{width:90px;height:90px;object-fit:cover;object-position:top;border-radius:8px;flex-shrink:0;}
+  .cart-info{flex:1;}
+  .cart-info h3{color:var(--gold-glow);font-size:1.1rem;margin-bottom:0.3rem;}
+  .cart-info p{color:var(--text-muted);font-size:0.95rem;}
+  .item-actions{display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;}
+  .btn-order-single{padding:0.5rem 1.2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-block;text-align:center;white-space:nowrap;}
+  .btn-order-single:hover{background:var(--gold-glow);transform:translateY(-2px);}
+  .btn-remove{background:rgba(220,53,69,0.2);border:1px solid rgba(220,53,69,0.4);color:#ff6b6b;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s ease;text-decoration:none;display:inline-block;text-align:center;}
+  .btn-remove:hover{background:rgba(220,53,69,0.4);}
+  .cart-total{background:rgba(24,4,13,0.85);border:1px solid var(--frame);border-radius:12px;padding:1.5rem 2rem;margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;}
+  .cart-total h2{color:var(--gold-aged);font-size:1.4rem;}
+  .btn-order-all{padding:0.95rem 3rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-decoration:none;}
+  .btn-order-all:hover{background:var(--gold-glow);transform:translateY(-2px);}
+  .empty{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-top:3rem;}
+  .empty a{color:var(--gold-aged);text-decoration:none;}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  @media(max-width:600px){
+    .cart-item{flex-wrap:wrap;}
+    .cart-total{flex-direction:column;gap:1rem;text-align:center;}
+    .item-actions{flex-direction:row;width:100%;justify-content:flex-end;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-wrapper">
+  <h1>Your Cart</h1>
+  <a href="/" class="back-link"><i class="fas fa-sign-out-alt fa-flip-horizontal"></i> Continue Shopping</a>
+
+  {% if cart_items %}
+    {% for item in cart_items %}
+    <div class="cart-item">
+      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+      <div class="cart-info">
+        <h3>{{ item.product.name }}</h3>
+        <p>Quantity: {{ item.quantity }}</p>
+        <p>₹ {{ item.product.price }}</p>
+      </div>
+      <div class="item-actions">
+        <a href="/checkout/single/{{ item.id }}/" class="btn-order-single">
+          <i class="fas fa-shopping-bag"></i> Order This
+        </a>
+        <a href="/cart/remove/{{ item.id }}/" class="btn-remove">Remove</a>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="cart-total">
+      <h2>Total: ₹ {{ total }}</h2>
+      <a href="/checkout/" class="btn-order-all">Order All</a>
+    </div>
+
+  {% else %}
+    <div class="empty">
+      <p>Your cart is empty!</p>
+      <a href="/">Shop Now</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Checkout – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .checkout-wrapper{max-width:600px;margin:0 auto;padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:2rem;}
+  .checkout-box{background:rgba(24,4,13,0.85);border:1px solid var(--frame);border-radius:16px;padding:2.5rem;}
+  .checkout-box h2{color:var(--gold-aged);font-size:1.3rem;margin-bottom:1.5rem;font-family:'Cinzel Decorative',cursive;}
+  .form-group{margin-bottom:1.3rem;}
+  .form-group label{display:block;color:var(--text-muted);font-size:0.9rem;margin-bottom:0.5rem;}
+  .form-group input,.form-group textarea{width:100%;padding:0.85rem 1rem;background:rgba(255,255,255,0.06);border:1px solid var(--frame);border-radius:8px;color:var(--text-cream);font-size:1rem;outline:none;transition:border 0.3s ease;font-family:'Inter',sans-serif;}
+  .form-group textarea{height:100px;resize:none;}
+  .form-group input:focus,.form-group textarea:focus{border-color:var(--gold-aged);}
+  .order-summary{background:rgba(201,163,71,0.08);border:1px solid var(--frame);border-radius:10px;padding:1.2rem;margin-bottom:1.5rem;}
+  .order-summary h3{color:var(--gold-glow);margin-bottom:0.8rem;font-size:1rem;}
+  .summary-item{display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.95rem;margin-bottom:0.4rem;}
+  .summary-total{display:flex;justify-content:space-between;color:var(--text-cream);font-size:1.1rem;font-weight:600;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--frame);}
+  .btn-place{width:100%;padding:0.95rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;margin-top:0.5rem;}
+  .btn-place:hover{background:var(--gold-glow);transform:translateY(-2px);}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .coupon-btn{padding:0.85rem 1.2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.3s ease;}
+  .coupon-btn:hover{background:var(--gold-glow);}
+  @media(max-width:480px){.row{grid-template-columns:1fr;}.checkout-box{padding:1.5rem;}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-wrapper">
+  <h1>Checkout</h1>
+  <a href="/cart/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Cart</a>
+
+  <div class="checkout-box">
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      {% for item in cart_items %}
+      <div class="summary-item">
+        <span>{{ item.product.name }} x{{ item.quantity }}</span>
+        <span>₹ {{ item.product.price }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-total">
+        <span>Total</span>
+        <span id="total-amount">₹ {{ total }}</span>
+      </div>
+    </div>
+
+    <form method="POST" action="{% if single_id %}/checkout/single/{{ single_id }}/{% else %}/checkout/{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="discounted_total" id="discounted_total" value="{{ total }}">
+      <h2>Delivery Details</h2>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="full_name" placeholder="Enter your full name" required/>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" name="phone" placeholder="Enter your phone number" required/>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <textarea name="address" placeholder="House no, Street, Area" required></textarea>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" name="city" placeholder="City" required/>
+        </div>
+        <div class="form-group">
+          <label>Pincode</label>
+          <input type="text" name="pincode" placeholder="Pincode" required/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Coupon Code (Optional)</label>
+        <div style="display:flex;gap:0.5rem;">
+          <input type="text" name="coupon_code" id="coupon_code" placeholder="Enter coupon code"/>
+          <button type="button" onclick="applyCoupon()" class="coupon-btn">Apply</button>
+        </div>
+        <p id="coupon-msg" style="font-size:0.85rem;margin-top:0.5rem;display:none;"></p>
+      </div>
+
+      <button type="submit" class="btn-place">Place Order</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function applyCoupon() {
+  const code = document.getElementById('coupon_code').value.trim();
+  const msg = document.getElementById('coupon-msg');
+  if (!code) {
+    msg.style.display = 'block';
+    msg.style.color = '#ff6b6b';
+    msg.textContent = 'Please enter a coupon code!';
+    return;
+  }
+  fetch(`/apply-coupon/?code=${code}&total={{ total }}`)
+    .then(res => res.json())
+    .then(data => {
+      msg.style.display = 'block';
+      if (data.valid) {
+        msg.style.color = '#a8c686';
+        msg.textContent = `✓ ${data.discount}% off applied! New total: ₹${data.new_total}`;
+        document.getElementById('total-amount').textContent = `₹ ${data.new_total}`;
+        document.getElementById('discounted_total').value = data.new_total;
+      } else {
+        msg.style.color = '#ff6b6b';
+        msg.textContent = data.message;
+      }
+    })
+    .catch(() => {
+      msg.style.display = 'block';
+      msg.style.color = '#ff6b6b';
+      msg.textContent = 'Error applying coupon. Try again!';
+    });
+}
+</script>
+{% endblock %}

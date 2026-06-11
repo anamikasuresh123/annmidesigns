@@ -1,0 +1,56 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Wishlist – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .wishlist-wrapper{max-width:900px;margin:0 auto;padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:2rem;}
+  .wishlist-item{display:flex;align-items:center;gap:1.5rem;background:rgba(24,4,13,0.75);border:1px solid var(--frame);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+  .wishlist-item img{width:90px;height:90px;object-fit:cover;object-position:top;border-radius:8px;flex-shrink:0;}
+  .wishlist-info{flex:1;}
+  .wishlist-info h3{color:var(--gold-glow);font-size:1.1rem;margin-bottom:0.3rem;}
+  .wishlist-info p{color:var(--text-muted);font-size:0.95rem;}
+  .actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;}
+  .btn-add{padding:0.5rem 1.2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:6px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.3s ease;text-decoration:none;display:inline-block;}
+  .btn-add:hover{background:var(--gold-glow);}
+  .btn-remove{background:rgba(220,53,69,0.2);border:1px solid rgba(220,53,69,0.4);color:#ff6b6b;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-size:0.9rem;transition:all 0.3s ease;text-decoration:none;display:inline-block;}
+  .btn-remove:hover{background:rgba(220,53,69,0.4);}
+  .empty{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-top:3rem;}
+  .empty a{color:var(--gold-aged);text-decoration:none;}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  @media(max-width:600px){
+    .wishlist-item{flex-wrap:wrap;}
+    .actions{width:100%;justify-content:flex-end;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wishlist-wrapper">
+  <h1>My Wishlist</h1>
+  <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+  {% if wishlist_items %}
+    {% for item in wishlist_items %}
+    <div class="wishlist-item">
+      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+      <div class="wishlist-info">
+        <h3>{{ item.product.name }}</h3>
+        <p>₹ {{ item.product.price }}</p>
+      </div>
+      <div class="actions">
+        <a href="/cart/add/{{ item.product.id }}/" class="btn-add">Add to Cart</a>
+        <a href="/wishlist/remove/{{ item.id }}/" class="btn-remove">Remove</a>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <p>Your wishlist is empty!</p>
+      <a href="/">Shop Now</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

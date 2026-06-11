@@ -1,0 +1,77 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Orders – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .orders-wrapper{max-width:900px;margin:0 auto;padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:2rem;}
+  .order-card{background:rgba(24,4,13,0.75);border:1px solid var(--frame);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+  .order-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--frame);}
+  .order-header h3{color:var(--gold-aged);font-family:'Cinzel Decorative',cursive;font-size:1rem;}
+  .order-header p{color:var(--text-muted);font-size:0.85rem;margin-top:0.3rem;}
+  .status{display:inline-block;padding:0.3rem 0.9rem;border-radius:20px;font-size:0.85rem;font-weight:500;}
+  .status.pending{background:rgba(201,163,71,0.2);color:var(--gold-aged);}
+  .status.delivered{background:rgba(168,198,134,0.2);color:#a8c686;}
+  .order-product{display:flex;align-items:center;gap:1.2rem;margin-bottom:1rem;}
+  .order-product img{width:80px;height:80px;object-fit:cover;object-position:top;border-radius:8px;flex-shrink:0;}
+  .order-product h4{color:var(--gold-glow);font-size:1rem;margin-bottom:0.3rem;}
+  .order-product p{color:var(--text-muted);font-size:0.9rem;}
+  .order-address{background:rgba(201,163,71,0.06);border:1px solid var(--frame);border-radius:8px;padding:1rem 1.2rem;margin-top:1rem;}
+  .order-address h4{color:var(--gold-aged);font-size:0.95rem;margin-bottom:0.7rem;}
+  .order-address p{color:var(--text-muted);font-size:0.9rem;line-height:1.7;}
+  .order-address span{color:var(--text-cream);}
+  .empty{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-top:3rem;}
+  .empty a{color:var(--gold-aged);text-decoration:none;}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  @media(max-width:600px){
+    .order-header{flex-direction:column;align-items:flex-start;gap:0.5rem;}
+    .order-product img{width:65px;height:65px;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-wrapper">
+  <h1>My Orders</h1>
+  <a href="/" class="back-link"><i class="fas fa-sign-out-alt fa-flip-horizontal"></i> Back to Home</a>
+
+  {% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+      <div class="order-header">
+        <div>
+          <h3>Order #{{ order.id }}</h3>
+          <p>Placed on {{ order.ordered_at|date:"d M Y, h:i A" }}</p>
+        </div>
+        <span class="status {{ order.status|lower }}">{{ order.status }}</span>
+      </div>
+
+      <div class="order-product">
+        <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}">
+        <div>
+          <h4>{{ order.product.name }}</h4>
+          <p>Quantity: {{ order.quantity }}</p>
+          <p>Price: ₹ {{ order.product.price }}</p>
+        </div>
+      </div>
+
+      <div class="order-address">
+        <h4><i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Delivery Address</h4>
+        <p><span>{{ order.full_name }}</span></p>
+        <p><span>{{ order.phone }}</span></p>
+        <p><span>{{ order.address }}</span></p>
+        <p><span>{{ order.city }} — {{ order.pincode }}</span></p>
+      </div>
+    </div>
+    {% endfor %}
+
+  {% else %}
+    <div class="empty">
+      <p>No orders yet!</p>
+      <a href="/">Shop Now</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

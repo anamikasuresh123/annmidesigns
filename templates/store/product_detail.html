@@ -1,0 +1,198 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ product.name }} – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .detail-wrapper{max-width:1100px;margin:0 auto;padding:2rem;}
+    .detail-container{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;}
+.product-image{border-radius:16px;border:1px solid var(--frame);overflow:hidden;background:var(--maroon-vintage);}
+.product-image img{width:100%;height:auto;display:block;object-fit:fill;}  .category-badge{display:inline-block;background:rgba(201,163,71,0.15);border:1px solid var(--frame);color:var(--gold-aged);padding:0.3rem 1rem;border-radius:20px;font-size:0.85rem;margin-bottom:1rem;}
+  .product-name{font-family:'Cinzel Decorative',cursive;color:var(--gold-glow);font-size:2rem;margin-bottom:0.8rem;line-height:1.3;}
+  .product-price{font-size:2rem;color:var(--text-cream);font-weight:600;margin-bottom:1.5rem;}
+  .product-desc{color:var(--text-muted);font-size:1rem;line-height:1.8;margin-bottom:1.5rem;}
+  .stock{font-size:0.9rem;margin-bottom:1.5rem;}
+  .stock.in{color:#a8c686;}
+  .stock.out{color:#ff6b6b;}
+  .size-label{color:var(--text-muted);font-size:0.9rem;margin-bottom:0.8rem;}
+  .size-btns{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+  .size-btn{padding:0.5rem 1.1rem;background:transparent;border:1px solid var(--frame);color:var(--text-cream);border-radius:6px;cursor:pointer;font-size:0.9rem;transition:all 0.3s ease;font-family:'Inter',sans-serif;}
+  .size-btn:hover{border-color:var(--gold-aged);color:var(--gold-aged);}
+  .size-btn.selected{background:var(--gold-aged);border-color:var(--gold-aged);color:var(--black-shadow);font-weight:600;}
+  .size-error{color:#ff6b6b;font-size:0.85rem;margin-bottom:1rem;display:none;}
+  .action-btns{display:flex;gap:1rem;margin-bottom:2rem;}
+  .btn-cart{flex:1;padding:1rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-decoration:none;text-align:center;display:block;}
+  .btn-cart:hover{background:var(--gold-glow);transform:translateY(-2px);}
+  .btn-wish{padding:1rem 1.5rem;background:transparent;border:1px solid var(--gold-aged);color:var(--gold-aged);border-radius:8px;font-size:1rem;cursor:pointer;transition:all 0.3s ease;text-decoration:none;text-align:center;}
+  .btn-wish:hover{border-color:#ff3f6c;color:#ff3f6c;}
+  .detail-row{display:flex;gap:1rem;padding:0.8rem 0;border-bottom:1px solid var(--frame);}
+  .detail-label{color:var(--text-muted);font-size:0.9rem;min-width:100px;}
+  .detail-value{color:var(--text-cream);font-size:0.9rem;}
+  .back-link{display:inline-block;margin-bottom:2rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  .review-section{margin-top:3rem;}
+  .review-form{background:rgba(24,4,13,0.75);border:1px solid var(--frame);border-radius:12px;padding:1.5rem;margin-bottom:2rem;}
+  .star-rating{display:flex;gap:0.3rem;margin-bottom:1rem;}
+  .star-rating label{font-size:2.2rem;cursor:pointer;color:rgba(201,163,71,0.3);transition:color 0.2s ease;line-height:1;}
+  .star-rating label:hover{color:#c9a347;}
+  .star-rating label.active{color:#c9a347;}
+  .review-card{background:rgba(24,4,13,0.75);border:1px solid var(--frame);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  @media(max-width:768px){
+    .detail-container{grid-template-columns:1fr;}
+.product-image{border-radius:16px;border:1px solid var(--frame);overflow:hidden;background:var(--maroon-vintage);}
+.product-image img{width:100%;height:auto;display:block;object-fit:fill;}  }
+  @media(max-width:480px){
+    .product-name{font-size:1.5rem;}
+    .product-price{font-size:1.5rem;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+  <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+
+  <div class="detail-container">
+    <div class="product-image">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    </div>
+
+    <div class="product-info">
+      <span class="category-badge">{{ product.category.name }}</span>
+      <h1 class="product-name">{{ product.name }}</h1>
+      <div class="product-price">₹ {{ product.price }}</div>
+      <p class="product-desc">{{ product.description }}</p>
+
+      {% if product.stock > 0 %}
+        <p class="stock in"><i class="fas fa-check-circle"></i> In Stock ({{ product.stock }} available)</p>
+      {% else %}
+        <p class="stock out"><i class="fas fa-times-circle"></i> Out of Stock</p>
+      {% endif %}
+
+      <p class="size-label">Select Size:</p>
+      <div class="size-btns">
+        {% for size in product.get_sizes %}
+        <button class="size-btn" onclick="selectSize(this, '{{ size }}')">{{ size }}</button>
+        {% endfor %}
+      </div>
+      <p class="size-error" id="size-error">Please select a size!</p>
+
+      <div class="action-btns">
+        <a href="/cart/add/{{ product.id }}/" class="btn-cart" id="cart-btn">
+          <i class="fas fa-shopping-bag"></i> Add to Cart
+        </a>
+        <a href="/wishlist/add/{{ product.id }}/" class="btn-wish">
+          <i class="fas fa-heart"></i>
+        </a>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Category</span>
+        <span class="detail-value">{{ product.category.name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Stock</span>
+        <span class="detail-value">{{ product.stock }} pieces</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Sizes</span>
+        <span class="detail-value">{{ product.sizes }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-section">
+    <h2 style="font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:1.8rem;margin-bottom:2rem;">Customer Reviews</h2>
+
+    {% if request.user.is_authenticated %}
+    <div class="review-form">
+      <h3 style="color:var(--gold-glow);font-size:1.1rem;margin-bottom:1rem;">Write a Review</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.5rem;">Rating:</p>
+        <div class="star-rating" id="star-rating">
+          <label onclick="setRating(1)" id="s1">★</label>
+          <label onclick="setRating(2)" id="s2">★</label>
+          <label onclick="setRating(3)" id="s3">★</label>
+          <label onclick="setRating(4)" id="s4">★</label>
+          <label onclick="setRating(5)" id="s5">★</label>
+        </div>
+        <input type="hidden" name="rating" id="rating-input">
+        <p id="rating-error" style="color:#ff6b6b;font-size:0.85rem;display:none;margin-bottom:0.5rem;">Please select a rating!</p>
+        <textarea name="comment" placeholder="Share your experience..." required style="width:100%;padding:0.85rem 1rem;background:rgba(255,255,255,0.06);border:1px solid var(--frame);border-radius:8px;color:var(--text-cream);font-size:1rem;outline:none;font-family:'Inter',sans-serif;height:100px;resize:none;margin-bottom:1rem;display:block;"></textarea>
+        <button type="submit" id="review-submit" style="padding:0.7rem 2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:6px;font-weight:600;font-size:0.95rem;cursor:pointer;">Submit Review</button>
+      </form>
+    </div>
+    {% else %}
+    <p style="color:var(--text-muted);font-family:'Inter',sans-serif;margin-bottom:2rem;">
+      <a href="/login/" style="color:var(--gold-aged);">Login</a> to write a review.
+    </p>
+    {% endif %}
+
+    {% if reviews %}
+      {% for review in reviews %}
+      <div class="review-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.8rem;">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(201,163,71,0.2);border:1px solid var(--gold-aged);display:flex;align-items:center;justify-content:center;color:var(--gold-aged);font-size:0.85rem;">
+              {{ review.user.username|first|upper }}
+            </div>
+            <span style="color:var(--text-cream);font-size:0.95rem;font-weight:500;">{{ review.user.username }}</span>
+          </div>
+          <span style="color:var(--text-muted);font-size:0.8rem;">{{ review.created_at|date:"d M Y" }}</span>
+        </div>
+        <div style="color:#c9a347;font-size:1.2rem;margin-bottom:0.5rem;">
+          {% for i in "12345" %}
+            {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+          {% endfor %}
+        </div>
+        <p style="color:var(--text-muted);font-family:'Inter',sans-serif;font-size:0.95rem;line-height:1.6;">{{ review.comment }}</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="color:var(--text-muted);font-family:'Inter',sans-serif;">No reviews yet — be the first to review!</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let selectedSize = '';
+  let selectedRating = 0;
+
+  function selectSize(btn, size) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSize = size;
+    document.getElementById('size-error').style.display = 'none';
+  }
+
+  function setRating(val) {
+    selectedRating = val;
+    document.getElementById('rating-input').value = val;
+    for(let i = 1; i <= 5; i++) {
+      const star = document.getElementById('s' + i);
+      star.classList.toggle('active', i <= val);
+    }
+    document.getElementById('rating-error').style.display = 'none';
+  }
+
+  document.getElementById('cart-btn').addEventListener('click', function(e) {
+    if (!selectedSize) {
+      e.preventDefault();
+      document.getElementById('size-error').style.display = 'block';
+    }
+  });
+
+  const isAuthenticated = "{{ request.user.is_authenticated }}";
+  if (isAuthenticated === "True") {
+    document.getElementById('review-submit').addEventListener('click', function(e) {
+      if (!selectedRating) {
+        e.preventDefault();
+        document.getElementById('rating-error').style.display = 'block';
+      }
+    });
+  }
+</script>
+{% endblock %}

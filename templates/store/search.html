@@ -1,0 +1,75 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Search – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .search-wrapper{padding:2rem;max-width:1400px;margin:0 auto;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:0.5rem;}
+  .subtitle{text-align:center;color:var(--text-muted);font-size:1rem;margin-bottom:2rem;font-family:'Inter',sans-serif;}
+  .search-bar{max-width:600px;margin:0 auto 3rem;position:relative;}
+  .search-bar input{width:100%;padding:0.9rem 3rem 0.9rem 1.5rem;background:rgba(255,255,255,0.08);border:1px solid var(--frame);border-radius:30px;color:var(--text-cream);font-size:1rem;outline:none;font-family:'Inter',sans-serif;}
+  .search-bar input:focus{border-color:var(--gold-aged);}
+  .search-bar button{position:absolute;right:15px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold-aged);cursor:pointer;font-size:1rem;}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  .collections-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+  .collection-card{position:relative;overflow:hidden;border:1px solid var(--frame);border-radius:14px;background:rgba(24,4,13,0.75);transition:all 0.6s ease;cursor:pointer;}
+  .card-img{width:100%;height:320px;object-fit:cover;object-position:top center;transition:transform 0.9s ease;}
+  .collection-card:hover .card-img{transform:scale(1.07);}
+  .card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(24,4,13,0.94) 30%,transparent 70%);opacity:0.55;transition:opacity 0.6s ease;}
+  .collection-card:hover .card-overlay{opacity:0.82;}
+  .card-content{position:absolute;bottom:0;left:0;right:0;padding:1.5rem 1rem;text-align:center;}
+  .card-title{font-size:1.2rem;color:var(--gold-glow);margin-bottom:0.4rem;font-weight:600;}
+  .card-price{font-size:1.1rem;color:var(--text-cream);font-weight:500;margin:0.3rem 0 0.8rem;}
+  .add-to-cart-btn{padding:0.6rem 1.2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:4px;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.35s ease;}
+  .add-to-cart-btn:hover{background:var(--gold-glow);}
+  .empty{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-top:3rem;grid-column:1/-1;}
+  @media(max-width:992px){.collections-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:576px){.collections-grid{grid-template-columns:1fr;}.card-img{height:250px;}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-wrapper">
+  <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  <h1>Search Results</h1>
+  <p class="subtitle">
+    {% if query %}{{ products.count }} result(s) for "{{ query }}"{% endif %}
+  </p>
+
+  <div class="search-bar">
+    <form action="/search/" method="GET">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search products..."/>
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+  </div>
+
+  <div class="collections-grid">
+    {% for product in products %}
+    <div class="collection-card" onclick="window.location='/product/{{ product.id }}/'">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+      <div class="card-overlay"></div>
+      <div class="card-content">
+        <h3 class="card-title">{{ product.name }}</h3>
+        <div class="card-price">₹ {{ product.price }}</div>
+        <div onclick="event.stopPropagation()">
+          <a href="/cart/add/{{ product.id }}/">
+            <button class="add-to-cart-btn">Add to Cart</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty">
+      {% if query %}
+        <i class="fas fa-search" style="font-size:3rem;color:var(--frame);margin-bottom:1rem;display:block;"></i>
+        <p>No products found for "{{ query }}"</p>
+      {% else %}
+        <p>Type something to search!</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

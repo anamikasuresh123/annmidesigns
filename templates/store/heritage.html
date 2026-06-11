@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heritage – AnmiDesigns</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon-dark:#18040d; --maroon-vintage:#2f0c19;
+      --gold-aged:#c9a347; --gold-glow:#d4b15a;
+      --text-cream:#f5e9d2; --text-muted:#d2b48c;
+      --black-shadow:#0c0206; --frame:rgba(201,163,71,0.22);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Playfair Display',serif;background:var(--maroon-vintage);color:var(--text-cream);min-height:100vh;}
+    .navbar{position:fixed;top:0;left:0;width:100%;z-index:2000;background:rgba(24,4,13,0.97);border-bottom:1px solid var(--frame);height:65px;}
+    .nav-container{max-width:1400px;margin:0 auto;padding:0 2.5rem;height:100%;display:flex;align-items:center;justify-content:space-between;}
+    .logo{font-family:'Cinzel Decorative',cursive;font-size:2.2rem;color:var(--gold-aged);letter-spacing:3.5px;text-decoration:none;}
+    .nav-icons{display:flex;align-items:center;gap:1.6rem;}
+    .icon-btn{color:var(--text-muted);font-size:1.3rem;text-decoration:none;transition:all 0.3s ease;position:relative;}
+    .icon-btn:hover{color:var(--gold-glow);}
+    .cart-count{position:absolute;top:-8px;right:-9px;background:var(--gold-aged);color:var(--black-shadow);font-size:0.6rem;font-weight:600;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+    /* Hero Section */
+    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 2rem;position:relative;background:linear-gradient(to bottom,rgba(24,4,13,0.3),rgba(24,4,13,0.8));overflow:hidden;}
+    .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1610030469668-98d55dd4f195?auto=format&fit=crop&q=80&w=1974') center/cover;opacity:0.3;z-index:-1;}
+    .hero h1{font-family:'Cinzel Decorative',cursive;font-size:5rem;color:var(--gold-aged);margin-bottom:1rem;text-shadow:0 5px 20px rgba(0,0,0,0.8);}
+    .hero p{font-size:1.3rem;color:var(--text-muted);max-width:700px;margin:0 auto;line-height:1.8;font-family:'Inter',sans-serif;}
+
+    /* Story Section */
+    .story{max-width:1100px;margin:0 auto;padding:5rem 2rem;}
+    .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-bottom:5rem;}
+    .story-grid.reverse{direction:rtl;}
+    .story-grid.reverse > *{direction:ltr;}
+    .story-img{border-radius:16px;overflow:hidden;border:1px solid var(--frame);}
+    .story-img img{width:100%;height:400px;object-fit:cover;object-position:top;}
+    .story-text h2{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.2rem;margin-bottom:1.2rem;line-height:1.3;}
+    .story-text p{color:var(--text-muted);font-family:'Inter',sans-serif;font-size:1.05rem;line-height:1.9;margin-bottom:1rem;}
+    .gold-line{width:60px;height:2px;background:var(--gold-aged);margin-bottom:1.5rem;}
+
+    /* Values Section */
+    .values{background:rgba(24,4,13,0.5);border-top:1px solid var(--frame);border-bottom:1px solid var(--frame);padding:4rem 2rem;}
+    .values h2{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:3rem;}
+    .values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:1000px;margin:0 auto;}
+    .value-card{text-align:center;padding:2rem 1.5rem;background:rgba(24,4,13,0.6);border:1px solid var(--frame);border-radius:12px;}
+    .value-card i{font-size:2.5rem;color:var(--gold-aged);margin-bottom:1rem;display:block;}
+    .value-card h3{font-family:'Cinzel Decorative',cursive;color:var(--gold-glow);font-size:1.2rem;margin-bottom:0.8rem;}
+    .value-card p{color:var(--text-muted);font-family:'Inter',sans-serif;font-size:0.95rem;line-height:1.7;}
+
+    /* CTA */
+    .cta{text-align:center;padding:5rem 2rem;}
+    .cta h2{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;margin-bottom:1rem;}
+    .cta p{color:var(--text-muted);font-family:'Inter',sans-serif;font-size:1.1rem;margin-bottom:2rem;}
+    .cta a{padding:1rem 3rem;background:var(--gold-aged);color:var(--black-shadow);text-decoration:none;border-radius:6px;font-size:1rem;font-weight:600;font-family:'Inter',sans-serif;transition:all 0.3s ease;display:inline-block;}
+    .cta a:hover{background:var(--gold-glow);transform:translateY(-2px);}
+
+    .back-link{position:fixed;top:80px;left:2rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;font-family:'Inter',sans-serif;z-index:100;}
+    .back-link:hover{color:var(--gold-glow);}
+
+    @media(max-width:768px){
+      .hero h1{font-size:3rem;}
+      .story-grid{grid-template-columns:1fr;}
+      .story-grid.reverse{direction:ltr;}
+      .values-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">AnmiDesigns</a>
+      <div class="nav-icons">
+        <a href="/wishlist/" class="icon-btn"><i class="far fa-heart"></i></a>
+        <a href="/cart/" class="icon-btn">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">{{ cart_count }}</span>
+        </a>
+        {% if request.user.is_authenticated %}
+          <a href="/profile/" class="icon-btn">
+            {% if request.user.profile.profile_picture %}
+              <img src="{{ request.user.profile.profile_picture.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-aged);">
+            {% else %}
+              <i class="far fa-user"></i>
+            {% endif %}
+          </a>
+        {% else %}
+          <a href="/login/" class="icon-btn"><i class="far fa-user"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <a href="/" class="back-link"><i class="fas fa-sign-out-alt fa-flip-horizontal"></i> </a>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div>
+      <h1>Our Heritage</h1>
+      <p>A legacy woven in gold and tradition — where every stitch tells a story of Kerala's rich cultural tapestry.</p>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="story-grid">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1610030469668-98d55dd4f195?auto=format&fit=crop&q=80&w=800" alt="Heritage">
+      </div>
+      <div class="story-text">
+        <div class="gold-line"></div>
+        <h2>The Story of AnmiDesigns</h2>
+        <p>Born from the heart of Kozhikode, AnmiDesigns is a celebration of India's timeless ethnic fashion. We believe that every woman deserves to feel like royalty — draped in the finest fabrics, adorned with intricate craftsmanship.</p>
+        <p>Our journey began with a simple vision: to bring the grandeur of traditional Indian wear to modern women, without compromising on quality or artistry.</p>
+      </div>
+    </div>
+
+    <div class="story-grid reverse">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1627483262268-9c2b5b2834b5?auto=format&fit=crop&q=80&w=800" alt="Craftsmanship">
+      </div>
+      <div class="story-text">
+        <div class="gold-line"></div>
+        <h2>The Art of Craftsmanship</h2>
+        <p>Every piece in our collection is a work of art. From hand-embroidered kurtis to intricate bridal blouses, each garment is crafted by skilled artisans who have inherited their craft through generations.</p>
+        <p>We source the finest fabrics — pure silk, velvet, georgette — and adorn them with zari, zardozi, and resham embroidery that reflects the rich textile heritage of India.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="values">
+    <h2>Our Values</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <i class="fas fa-gem"></i>
+        <h3>Quality</h3>
+        <p>We never compromise on quality. Every fabric, every thread, every embellishment is chosen with the utmost care and attention to detail.</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-hands"></i>
+        <h3>Craftsmanship</h3>
+        <p>We celebrate the art of handcrafting. Our artisans pour their heart and soul into every piece, ensuring each garment is truly one of a kind.</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-heart"></i>
+        <h3>Tradition</h3>
+        <p>We honor India's rich textile heritage while bringing it into the modern age — timeless designs that transcend trends and seasons.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Explore Our Collections</h2>
+    <p>Discover handcrafted masterpieces that tell the story of India's rich heritage.</p>
+    <a href="/all-products/">Shop Now</a>
+  </section>
+
+</body>
+</html>

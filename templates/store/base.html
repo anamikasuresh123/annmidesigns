@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}AnmiDesigns{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon-dark:#18040d; --maroon-vintage:#2f0c19; --maroon-rich:#4a0012;
+      --gold-aged:#c9a347; --gold-glow:#d4b15a; --text-cream:#f5e9d2;
+      --text-muted:#d2b48c; --black-shadow:#0c0206; --frame:rgba(201,163,71,0.22);
+      --success:#a8c686;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Playfair Display',serif;background:var(--maroon-vintage);color:var(--text-cream);overflow-x:hidden;}
+
+    /* ── NAVBAR ── */
+    .navbar{position:fixed;top:0;left:0;width:100%;z-index:2000;background:rgba(24,4,13,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--frame);height:65px;}
+    .nav-container{max-width:1400px;margin:0 auto;padding:0 2rem;height:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+    .logo{font-family:'Cinzel Decorative',cursive;font-size:1.8rem;color:var(--gold-aged);letter-spacing:3px;text-decoration:none;transition:transform 0.3s ease;white-space:nowrap;}
+    .logo:hover{transform:scale(1.04);}
+    .nav-menu{display:flex;gap:1.8rem;list-style:none;align-items:center;}
+    .nav-menu a{color:var(--text-muted);text-decoration:none;font-size:0.95rem;font-weight:500;font-family:'Inter',sans-serif;position:relative;transition:color 0.3s ease;white-space:nowrap;}
+    .nav-menu a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:50%;background:var(--gold-aged);transition:width 0.4s ease,left 0.4s ease;transform:translateX(-50%);}
+    .nav-menu a:hover,.nav-menu a.active{color:var(--gold-glow);}
+    .nav-menu a:hover::after,.nav-menu a.active::after{width:70%;left:50%;}
+    .nav-icons{display:flex;align-items:center;gap:1.2rem;}
+    .icon-btn{color:var(--text-muted);font-size:1.2rem;cursor:pointer;transition:all 0.3s ease;position:relative;text-decoration:none;}
+    .icon-btn:hover{color:var(--gold-glow);transform:scale(1.15);}
+    .cart-count{position:absolute;top:-8px;right:-9px;background:var(--gold-aged);color:var(--black-shadow);font-size:0.6rem;font-weight:600;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+    .hamburger{display:none;font-size:1.6rem;color:var(--gold-aged);cursor:pointer;background:none;border:none;}
+
+    /* ── SEARCH ── */
+    .search-form{position:relative;display:flex;align-items:center;}
+    .search-form input{padding:0.35rem 2rem 0.35rem 0.8rem;background:rgba(255,255,255,0.08);border:1px solid var(--frame);border-radius:20px;color:var(--text-cream);font-size:0.85rem;outline:none;width:160px;font-family:'Inter',sans-serif;transition:width 0.3s ease;}
+    .search-form input:focus{width:200px;border-color:var(--gold-aged);}
+    .search-form button{position:absolute;right:8px;background:none;border:none;color:var(--gold-aged);cursor:pointer;font-size:0.85rem;}
+
+    /* ── DROPDOWN ── */
+    .dropdown{position:relative;}
+    .dropdown-content{display:none;position:absolute;top:110%;left:50%;transform:translateX(-50%);background:rgba(24,4,13,0.97);backdrop-filter:blur(10px);border:1px solid var(--frame);border-radius:8px;min-width:200px;box-shadow:0 8px 25px rgba(0,0,0,0.65);z-index:3000;padding:8px 0;}
+    .dropdown-content a{color:var(--text-muted);padding:9px 20px;text-decoration:none;display:block;font-size:0.92rem;font-family:'Inter',sans-serif;transition:all 0.3s ease;}
+    .dropdown-content a:hover{color:var(--gold-glow);background:rgba(201,163,71,0.07);}
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu{display:none;position:fixed;top:65px;left:0;width:100%;background:rgba(24,4,13,0.99);z-index:1999;flex-direction:column;padding:1rem 0;border-bottom:1px solid var(--frame);}
+    .mobile-menu.open{display:flex;}
+    .mobile-menu a{color:var(--text-muted);text-decoration:none;padding:0.8rem 2rem;font-family:'Inter',sans-serif;font-size:1rem;border-bottom:1px solid rgba(201,163,71,0.08);transition:color 0.3s ease;}
+    .mobile-menu a:hover{color:var(--gold-glow);}
+    .mobile-search{padding:0.8rem 2rem;}
+    .mobile-search input{width:100%;padding:0.6rem 1rem;background:rgba(255,255,255,0.08);border:1px solid var(--frame);border-radius:20px;color:var(--text-cream);font-size:0.9rem;outline:none;font-family:'Inter',sans-serif;}
+
+    /* ── FOOTER ── */
+    .footer{background:rgba(24,4,13,0.9);border-top:1px solid var(--frame);padding:2rem;text-align:center;margin-top:4rem;}
+    .footer p{color:var(--text-muted);font-family:'Inter',sans-serif;font-size:0.9rem;}
+    .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1rem;flex-wrap:wrap;}
+    .footer-links a{color:var(--text-muted);text-decoration:none;font-family:'Inter',sans-serif;font-size:0.9rem;transition:color 0.3s ease;}
+    .footer-links a:hover{color:var(--gold-glow);}
+    .footer-social{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;}
+    .footer-social a{color:var(--text-muted);font-size:1.3rem;transition:color 0.3s ease;}
+    .footer-social a:hover{color:var(--gold-aged);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .search-form input{width:130px;}
+      .nav-menu{gap:1.2rem;}
+    }
+    @media(max-width:768px){
+      .nav-menu{display:none;}
+      .search-form{display:none;}
+      .hamburger{display:block;}
+      .logo{font-size:1.5rem;}
+    }
+    @media(max-width:480px){
+      .logo{font-size:1.3rem;letter-spacing:1px;}
+      .nav-container{padding:0 1rem;}
+      .nav-icons{gap:0.8rem;}
+      .icon-btn{font-size:1.1rem;}
+    }
+
+   </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">AnmiDesigns</a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="/" {% if request.path == '/' %}class="active"{% endif %}>Home</a></li>
+        <li><a href="/heritage/" {% if request.path == '/heritage/' %}class="active"{% endif %}>Heritage</a></li>
+        <li class="dropdown" id="collectionsDropdown">
+          <a style="cursor:pointer;">Collections <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:4px;"></i></a>
+          <div class="dropdown-content" id="collectionsMenu">
+            <a href="/collections/kurti/">Kurti</a>
+            <a href="/collections/anarkali/">Anarkali</a>
+            <a href="/collections/churidar/">Churidar</a>
+            <a href="/collections/bridal-blouse/">Bridal Blouse</a>
+            <a href="#">Custom Orders</a>
+          </div>
+        </li>
+        <li><a href="#">Sarees</a></li>
+        <li><a href="#">Lehengas</a></li>
+      </ul>
+
+      <form class="search-form" action="/search/" method="GET">
+        <input type="text" name="q" placeholder="Search..."/>
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </form>
+
+      <div class="nav-icons">
+        <a href="/wishlist/" class="icon-btn" title="Wishlist"><i class="far fa-heart"></i></a>
+        <a href="/cart/" class="icon-btn" title="Cart">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">{{ cart_count|default:0 }}</span>
+        </a>
+        {% if request.user.is_authenticated %}
+          <a href="/profile/" class="icon-btn" title="Profile">
+            {% if request.user.profile.profile_picture %}
+              <img src="{{ request.user.profile.profile_picture.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-aged);">
+            {% else %}
+              <i class="far fa-user"></i>
+            {% endif %}
+          </a>
+          <a href="/logout/" class="icon-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+          <a href="/login/" class="icon-btn" title="Login"><i class="far fa-user"></i></a>
+        {% endif %}
+        <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-search">
+      <form action="/search/" method="GET">
+        <input type="text" name="q" placeholder="Search products..."/>
+      </form>
+    </div>
+    <a href="/">Home</a>
+    <a href="/heritage/">Heritage</a>
+    <a href="/collections/kurti/">Kurti</a>
+    <a href="/collections/anarkali/">Anarkali</a>
+    <a href="/collections/churidar/">Churidar</a>
+    <a href="/collections/bridal-blouse/">Bridal Blouse</a>
+    <a href="/wishlist/">Wishlist</a>
+    <a href="/cart/">Cart</a>
+    {% if request.user.is_authenticated %}
+      <a href="/profile/">Profile</a>
+      <a href="/logout/">Logout</a>
+    {% else %}
+      <a href="/login/">Login</a>
+      <a href="/register/">Register</a>
+    {% endif %}
+  </div>
+
+  <!-- Page Content -->
+  <div style="padding-top:65px;">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-social">
+      <a href="https://wa.me/918606826558" target="_blank"><i class="fab fa-whatsapp" style="color:#25D366;"></i></a>
+      <a href="https://instagram.com/miiikhha" target="_blank"><i class="fab fa-instagram" style="color:#E1306C;"></i></a>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/heritage/">Heritage</a>
+      <a href="/all-products/">All Products</a>
+      <a href="/cart/">Cart</a>
+      <a href="/orders/">Orders</a>
+    </div>
+    <p>© 2026 AnmiDesigns — Kozhikode, Kerala</p>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const icon = hamburger.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    });
+
+    // Dropdown
+    const dropdown = document.getElementById('collectionsDropdown');
+    const menu = document.getElementById('collectionsMenu');
+    if(dropdown) {
+      dropdown.addEventListener('mouseenter', () => { menu.style.display = 'block'; });
+      dropdown.addEventListener('mouseleave', () => { menu.style.display = 'none'; });
+    }
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

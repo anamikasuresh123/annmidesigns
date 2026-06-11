@@ -1,0 +1,102 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Profile – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-wrapper{max-width:700px;margin:0 auto;padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:2.5rem;text-align:center;margin-bottom:2rem;}
+  .profile-card{background:rgba(24,4,13,0.85);border:1px solid var(--frame);border-radius:16px;padding:2.5rem;margin-bottom:1.5rem;}
+  .avatar{width:90px;height:90px;border-radius:50%;background:rgba(201,163,71,0.2);border:2px solid var(--gold-aged);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--gold-aged);margin:0 auto 0.8rem;overflow:hidden;}
+  .avatar img{width:100%;height:100%;object-fit:cover;}
+  .change-photo{text-align:center;margin-bottom:1.5rem;}
+  .change-photo label{cursor:pointer;color:var(--gold-aged);font-size:0.9rem;font-family:'Inter',sans-serif;}
+  .change-photo label:hover{color:var(--gold-glow);}
+  .profile-name{text-align:center;font-family:'Cinzel Decorative',cursive;color:var(--gold-glow);font-size:1.5rem;margin-bottom:0.3rem;}
+  .profile-email{text-align:center;color:var(--text-muted);font-size:0.95rem;margin-bottom:2rem;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0;border-bottom:1px solid var(--frame);}
+  .info-row:last-child{border-bottom:none;}
+  .info-label{color:var(--text-muted);font-size:0.9rem;}
+  .info-value{color:var(--text-cream);font-size:0.95rem;font-weight:500;}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+  .stat-card{background:rgba(24,4,13,0.85);border:1px solid var(--frame);border-radius:12px;padding:1.2rem;text-align:center;}
+  .stat-card h3{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:1.5rem;margin-bottom:0.3rem;}
+  .stat-card p{color:var(--text-muted);font-size:0.85rem;}
+  .btn-logout{width:100%;padding:0.95rem;background:rgba(220,53,69,0.2);border:1px solid rgba(220,53,69,0.4);color:#ff6b6b;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-align:center;display:block;text-decoration:none;margin-top:1rem;}
+  .btn-logout:hover{background:rgba(220,53,69,0.4);}
+  .btn-action{width:100%;padding:0.95rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-align:center;display:block;text-decoration:none;margin-bottom:0.8rem;}
+  .btn-action:hover{background:var(--gold-glow);}
+  .btn-action-outline{background:transparent;border:1px solid var(--gold-aged);color:var(--gold-aged);}
+  .btn-action-outline:hover{background:var(--gold-aged);color:var(--black-shadow);}
+  @media(max-width:480px){
+    .stats-grid{grid-template-columns:1fr 1fr;}
+    .profile-card{padding:1.5rem;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+  <h1>My Profile</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>{{ order_count }}</h3>
+      <p>Orders</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{ wishlist_count }}</h3>
+      <p>Wishlist</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{ cart_count }}</h3>
+      <p>In Cart</p>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="avatar">
+        {% if user.profile.profile_picture %}
+          <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+        {% else %}
+          <i class="fas fa-user"></i>
+        {% endif %}
+      </div>
+      <div class="change-photo">
+        <label for="profile_picture">
+          <i class="fas fa-camera"></i> Change Photo
+        </label>
+        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display:none;" onchange="this.form.submit()"/>
+      </div>
+    </form>
+
+    <p class="profile-name">{{ user.username }}</p>
+    <p class="profile-email">{{ user.email }}</p>
+
+    <div class="info-row">
+      <span class="info-label">Username</span>
+      <span class="info-value">{{ user.username }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email</span>
+      <span class="info-value">{{ user.email }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Joined</span>
+      <span class="info-value">{{ user.date_joined|date:"d M Y" }}</span>
+    </div>
+  </div>
+
+  <a href="/orders/" class="btn-action">
+    <i class="fas fa-box"></i> My Orders
+  </a>
+  <a href="/wishlist/" class="btn-action btn-action-outline">
+    <i class="fas fa-heart"></i> My Wishlist
+  </a>
+  <a href="/logout/" class="btn-logout">
+    <i class="fas fa-sign-out-alt"></i> Logout
+  </a>
+</div>
+{% endblock %}

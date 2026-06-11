@@ -1,0 +1,95 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Kurti Collection – AnmiDesigns{% endblock %}
+
+{% block extra_css %}
+<style>
+  .collection-wrapper{padding:2rem;}
+  h1{font-family:'Cinzel Decorative',cursive;color:var(--gold-aged);font-size:3rem;text-align:center;margin-bottom:0.5rem;}
+  .subtitle{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-bottom:3rem;font-family:'Inter',sans-serif;}
+  .back-link{display:inline-block;margin-bottom:1.5rem;color:var(--text-muted);text-decoration:none;font-size:0.95rem;}
+  .back-link:hover{color:var(--gold-glow);}
+  .collections-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;max-width:1400px;margin:0 auto;}
+  .collection-card{position:relative;overflow:hidden;border:1px solid var(--frame);border-radius:14px;background:rgba(24,4,13,0.75);transition:all 0.6s ease;cursor:pointer;}
+  .card-img{width:100%;height:320px;object-fit:cover;object-position:top center;transition:transform 0.9s ease;}
+  .collection-card:hover .card-img{transform:scale(1.07);}
+  .card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(24,4,13,0.94) 30%,transparent 70%);opacity:0.55;transition:opacity 0.6s ease;}
+  .collection-card:hover .card-overlay{opacity:0.82;}
+  .card-content{position:absolute;bottom:0;left:0;right:0;padding:1.5rem 1rem;text-align:center;}
+  .card-title{font-size:1.2rem;color:var(--gold-glow);margin-bottom:0.4rem;font-weight:600;}
+  .card-price{font-size:1.1rem;color:var(--text-cream);font-weight:500;margin:0.3rem 0 0.8rem;}
+  .card-desc{font-size:0.85rem;color:var(--text-muted);margin-bottom:0.8rem;font-family:'Inter',sans-serif;}
+  .heart-btn{display:inline-block;margin-right:0.4rem;}
+  .heart-btn button{padding:0.6rem 0.9rem;background:transparent;border:1px solid var(--gold-aged);color:var(--gold-aged);border-radius:4px;cursor:pointer;font-size:0.85rem;transition:all 0.3s ease;}
+  .heart-btn button.liked{background:rgba(255,63,108,0.15);border-color:#ff3f6c;color:#ff3f6c;}
+  .add-to-cart-btn{padding:0.6rem 1.2rem;background:var(--gold-aged);color:var(--black-shadow);border:none;border-radius:4px;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.35s ease;}
+  .add-to-cart-btn:hover{background:var(--gold-glow);}
+  .empty{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-top:3rem;}
+  @media(max-width:992px){.collections-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:576px){.collections-grid{grid-template-columns:1fr;}.card-img{height:250px;}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="collection-wrapper">
+  <a href="/" class="back-link"><i class="fas fa-sign-out-alt fa-flip-horizontal"></i> Back to Home</a>
+  <h1>Kurti Collection</h1>
+  <p class="subtitle">Handcrafted kurtis — elegant, timeless, uniquely yours</p>
+
+  <div class="collections-grid">
+    {% for product in products %}
+    <div class="collection-card" onclick="window.location='/product/{{ product.id }}/'">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img" {% if product.stock == 0 %}style="filter:grayscale(100%);opacity:0.6;"{% endif %}>
+      {% if product.stock == 0 %}
+      <div style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.7);color:#fff;padding:0.3rem 0.8rem;border-radius:4px;font-size:0.8rem;font-family:'Inter',sans-serif;z-index:10;">Out of Stock</div>
+      {% endif %}
+      <div class="card-overlay"></div>
+      <div class="card-content">
+        <h3 class="card-title">{{ product.name }}</h3>
+        <div class="card-price">₹ {{ product.price }}</div>
+        <p class="card-desc">{{ product.description }}</p>
+        <div onclick="event.stopPropagation()">
+          <a href="/wishlist/add/{{ product.id }}/" class="heart-btn" id="heart-{{ product.id }}">
+            <button class="heart"><i class="fas fa-heart"></i></button>
+          </a>
+          <a href="/cart/add/{{ product.id }}/">
+            <button class="add-to-cart-btn">Add to Cart</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty" style="grid-column:1/-1;">
+      <p>No Kurti products yet — add from admin panel!</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const wishlistData = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  wishlistData.forEach(id => {
+    const btn = document.querySelector(`#heart-${id} .heart`);
+    if(btn) btn.classList.add('liked');
+  });
+  document.querySelectorAll('.heart-btn').forEach(link => {
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const id = this.id.replace('heart-', '');
+      const btn = this.querySelector('.heart');
+      btn.classList.toggle('liked');
+      let wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      if(btn.classList.contains('liked')){
+        wl.push(id);
+        fetch(`/wishlist/add/${id}/`);
+      } else {
+        wl = wl.filter(i => i !== id);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(wl));
+    });
+  });
+</script>
+{% endblock %}
