@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-ceka$*oleon%jab(%ebcmuvn)%##kcp1txu7_c#n(c2%_m!7xa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['annmidesigns.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
