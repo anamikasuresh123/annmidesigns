@@ -121,6 +121,8 @@ class RemoveFromWishlistView(LoginRequiredMixin, View):
         return redirect('wishlist')
 
 
+import urllib.parse
+
 class CheckoutView(LoginRequiredMixin, View):
     login_url = '/login/'
 
@@ -136,7 +138,12 @@ class CheckoutView(LoginRequiredMixin, View):
         address = request.POST['address']
         city = request.POST['city']
         pincode = request.POST['pincode']
+        
+        items_text = ""
+        total = 0
         for item in cart_items:
+            items_text += f"- {item.product.name} x{item.quantity} = ₹{item.product.price * item.quantity}\n"
+            total += item.product.price * item.quantity
             Order.objects.create(
                 user=request.user,
                 product=item.product,
@@ -148,7 +155,23 @@ class CheckoutView(LoginRequiredMixin, View):
                 pincode=pincode
             )
         cart_items.delete()
-        return redirect('orders')
+        
+        message = f"""🛍️ *New Order - AnmiDesigns!*
+
+👤 *Customer:* {full_name}
+📞 *Phone:* {phone}
+📧 *Email:* {request.user.email}
+
+📦 *Items:*
+{items_text}
+💰 *Total:* ₹{total}
+
+📍 *Delivery Address:*
+{address}
+{city} - {pincode}"""
+
+        whatsapp_url = f"https://wa.me/918606826558?text={urllib.parse.quote(message)}"
+        return redirect(whatsapp_url)
 
 
 class SingleCheckoutView(LoginRequiredMixin, View):
@@ -169,6 +192,7 @@ class SingleCheckoutView(LoginRequiredMixin, View):
         address = request.POST['address']
         city = request.POST['city']
         pincode = request.POST['pincode']
+        
         Order.objects.create(
             user=request.user,
             product=cart_item.product,
@@ -180,8 +204,22 @@ class SingleCheckoutView(LoginRequiredMixin, View):
             pincode=pincode
         )
         cart_item.delete()
-        return redirect('orders')
+        
+        message = f"""🛍️ *New Order - AnmiDesigns!*
 
+👤 *Customer:* {full_name}
+📞 *Phone:* {phone}
+📧 *Email:* {request.user.email}
+
+📦 *Item:* {cart_item.product.name} x{cart_item.quantity}
+💰 *Total:* ₹{cart_item.product.price * cart_item.quantity}
+
+📍 *Delivery Address:*
+{address}
+{city} - {pincode}"""
+
+        whatsapp_url = f"https://wa.me/918606826558?text={urllib.parse.quote(message)}"
+        return redirect(whatsapp_url)
 
 class OrdersView(LoginRequiredMixin, View):
     login_url = '/login/'
