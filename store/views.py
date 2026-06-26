@@ -428,3 +428,12 @@ class AdminDeleteCouponView(View):
         coupon = get_object_or_404(Coupon, id=coupon_id)
         coupon.delete()
         return redirect('/admin-dashboard/')            
+    
+
+class RentalView(View):
+    def get(self, request):
+        products = Product.objects.filter(category__name__icontains='Rental')
+        cart_count = 0
+        if request.user.is_authenticated:
+            cart_count = Cart.objects.filter(user=request.user).count()
+        return render(request, 'store/rental.html', {'products': products, 'cart_count': cart_count})    

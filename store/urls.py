@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     ApplyCouponView, HeritageView, HomeView, LoginView, ProductDetailView, RegisterView,
     LogoutView, CartView, AddToCartView,
-    RemoveFromCartView, SingleCheckoutView, WishlistView, AddToWishlistView,
+    RemoveFromCartView, RentalView, SingleCheckoutView, WishlistView, AddToWishlistView,
     RemoveFromWishlistView, CheckoutView, OrdersView,
     ProfileView, KurtiView, anarkali, AllProductsView,SearchView,ChuridarView,BridalBlouseView,
       AdminDashboardView, AdminOrderStatusView,
@@ -37,6 +37,7 @@ urlpatterns = [
     path('admin-dashboard/order/<int:order_id>/status/', AdminOrderStatusView.as_view(), name='admin_order_status'),
     path('admin-dashboard/product/<int:product_id>/delete/', AdminDeleteProductView.as_view(), name='admin_delete_product'),
     path('admin-dashboard/coupon/<int:coupon_id>/delete/', AdminDeleteCouponView.as_view(), name='admin_delete_coupon'),
+    path('rental/', RentalView.as_view(), name='rental'),
         
 ]
 
