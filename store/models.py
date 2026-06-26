@@ -92,4 +92,11 @@ class Coupon(models.Model):
                                       help_text='Select specific products for this offer. Leave empty to apply to all products.')
 
     def __str__(self):
-        return f"{self.code} - {self.discount_percent}%"
+        return f"{self.code} - {self.discount_percent}%"
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/')
+    
+    def __str__(self):
+        return f"{self.product.name} - image"

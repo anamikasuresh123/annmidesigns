@@ -53,9 +53,22 @@
   <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
 
   <div class="detail-container">
-    <div class="product-image">
-      <img src="{{ product.image.url }}" alt="{{ product.name }}">
-    </div>
+  <div class="product-image">
+  <img src="{{ product.image.url }}" alt="{{ product.name }}" id="mainImg" style="width:100%;height:auto;display:block;object-fit:fill;border-radius:16px;">
+  
+  <div style="display:flex;gap:0.5rem;margin-top:0.8rem;flex-wrap:wrap;">
+    <img src="{{ product.image.url }}" 
+         onclick="document.getElementById('mainImg').src=this.src" 
+         style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:2px solid var(--gold-aged);cursor:pointer;">
+    {% for img in product.images.all %}
+    <img src="{{ img.image.url }}" 
+         onclick="document.getElementById('mainImg').src=this.src" 
+         style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--frame);cursor:pointer;opacity:0.7;transition:all 0.3s ease;"
+         onmouseover="this.style.opacity='1';this.style.borderColor='var(--gold-aged)'"
+         onmouseout="this.style.opacity='0.7';this.style.borderColor='var(--frame)'">
+    {% endfor %}
+  </div>
+</div>
 
     <div class="product-info">
       <span class="category-badge">{{ product.category.name }}</span>
